@@ -1,0 +1,21 @@
+from prometheus_client import start_http_server, Gauge
+import time
+
+# Define Prometheus metrics
+gauge_muon_data = Gauge('muon_sensor_data', 'Muon sensor data value')
+
+def read_muon_data(file_path):
+    with open(file_path, 'r') as f:
+        return float(f.read().strip())
+
+if __name__ == '__main__':
+    # Start the Prometheus server on port 8000
+    start_http_server(8000)
+
+    while True:
+        muon_data = read_muon_data('muon_metric.txt')
+
+        # Update the Prometheus metric with the sensor data
+        gauge_muon_data.set(muon_data)
+
+        time.sleep(10)  # Update every 10 seconds
