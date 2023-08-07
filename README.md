@@ -1,2 +1,2 @@
 # Rutherford-Software
-place to put janky RPi code 
+Page with code for the 2023 Rutherford Scattering Expeirment summer project
