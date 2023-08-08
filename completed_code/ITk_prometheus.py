@@ -1,5 +1,6 @@
 import json
 from prometheus_client import start_http_server, Gauge
+import time
 
 def categorize_data(data, threshold):
     categorized_data = []
@@ -71,20 +72,23 @@ def main():
 
     # Create Prometheus Gauge objects for total hits and no-hits
     hits_gauge = Gauge("hits_total", "Total hits for each category", ["category"])
-    #no_hits_gauge = Gauge("no_hits_total", "Total no-hits for each category", ["category"])
+
 
     # Update Prometheus Gauges with total hits and no-hits for each category
     for category, total_hits in total_hits_dict.items():
         hits_gauge.labels(category=category).set(total_hits)
 
-    #for category, total_no_hits in total_no_hits_dict.items():
-     #   no_hits_gauge.labels(category=category).set(total_no_hits)
 
     # Push the metrics to Prometheus Pushgateway
-    #registry = CollectorRegistry()
-    #push_to_gateway("130.246.43.14:8000", job="sensor", registry=registry)
     start_http_server(8000)
     print("Prometheus ITk metrics server started")
+    
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
 
 if __name__ == "__main__":
     main()
+
