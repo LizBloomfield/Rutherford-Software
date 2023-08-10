@@ -1,0 +1,7 @@
+sudo ./bin/scanConsole -r configs/controller/specCfg-rd53a-16x1.json -c configs/connectivity/SCC_config.json -s configs/scans/rd53a/std_noisescan.json -p 
+
+cd /home/local/Yarr/data/last_scan/ 
+
+cp JohnDoe_0_NoiseMap-0.json ~/ 
+
+python -i prompush.py 
