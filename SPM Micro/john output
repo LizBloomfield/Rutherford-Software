@@ -1,0 +1,50 @@
+import serial
+from prometheus_client import start_http_server, Gauge
+
+ser = serial.Serial('/dev/ttyUSB0', 9600)
+
+John_histogram = Gauge('particle_detected', 'Total particles detected')
+# Start Prometheus metrics server
+start_http_server(8000)
+print("Prometheus metrics server started")
+
+previous_reading = None
+histogram_bin=0
+# Define the threshold for increase 
+threshold_increase = 10
+
+try:
+    while True:
+        data = ser.readline().decode().strip()
+        if data:
+            try:
+                # Convert the data to an integer value
+                current_reading = int(data)
+                #prints voltage being recieved by john
+                #print("",data)
+
+                # Check if previous_reading is not None (not the first reading)
+                if previous_reading is not None:
+                    # Calculate the voltage change
+                    voltage_change = current_reading - previous_reading
+
+                    # Compare the voltage change with the threshold for increase
+                    if voltage_change > threshold_increase:
+                        print(f"particle detected")
+                        histogram_bin+=1
+                        print("hb:", histogram_bin)
+                        John_histogram.set(histogram_bin)
+
+
+                # Update previous_reading with the current reading for the next iteration
+                previous_reading = current_reading
+
+            except ValueError as e:
+                print("Invalid data format received from Arduino:", data)
+                print("Error:", e)
+                
+
+
+except KeyboardInterrupt:
+    ser.close()
+    print("Serial communication closed.")
